@@ -4,12 +4,8 @@
 
 A Slack integration for logging decisions in Git.
 
-{% note %}
-
-**Note:** This is a maintained fork of [envsio/decision](https://github.com/evnsio/decision). All credit goes to Chris Evans
+>**Note:** This is a maintained fork of [envsio/decision](https://github.com/evnsio/decision). All credit goes to Chris Evans
 for building the original slackbot.
-
-{% endnote %}
 
 ---
 
