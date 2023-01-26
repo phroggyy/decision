@@ -4,6 +4,13 @@
 
 A Slack integration for logging decisions in Git.
 
+{% note %}
+
+**Note:** This is a maintained fork of [envsio/decision](https://github.com/evnsio/decision). All credit goes to Chris Evans
+for building the original slackbot.
+
+{% endnote %}
+
 ---
 
 ## How does it work?
@@ -33,7 +40,7 @@ A Slack integration for logging decisions in Git.
 
 ## Build and Run
 
-The latest build of decision is available at [evns/decision](https://hub.docker.com/repository/docker/evns/decision) on Docker Hub. 
+The latest build of decision is available at [phroggyy/decision](https://hub.docker.com/repository/docker/phroggyy/decision) on Docker Hub. 
 
 If you want to build it, the easiest way is via docker.  From the root directory run:
 
@@ -46,15 +53,19 @@ Settings are supplied via the following command line arguments:
 ```
 Usage of ./decision:
   -branch string
-    	The branch where decisions will be committed (default "master")
+    	The branch where decisions will be committed (default "main")
   -commit-as-prs
     	Commit decisions as Pull Requests (default false)
   -commit-author string
     	The author name to use for commits (required)
   -commit-email string
     	The author email to use for commits (required)
-  -github-token string
-    	Your GitHub access token (required)
+  -provider string
+    	Your git provider, github or gitlab (default "github")
+  -provider-token string
+    	Your GitHub/GitLab access token (required)
+  -slack-signing-secret string
+    	Your Slack signing secret (required)
   -slack-token string
     	Your Slack API token starting xoxb-... (required)
   -source-owner string
@@ -70,10 +81,10 @@ docker run -p 8000:8000 evns/decision
     -slack-token=xoxb-123456789101-1234567891011-abcdefghijklmnopqrstuvwx
     -slack-signing-secret=abc123def456ghi789jkl101112mno13
     -github-token=abc123def456ghi789jkl101112mno131415pqr1
-    -source-owner=evnsio
+    -source-owner=phroggyy
     -source-repo=decisions
-    -commit-author=Chris Evans
-    -commit-email=my@email.com 
+    -commit-author=Leo Sjoberg
+    -commit-email=hey@leosjoberg.com 
     -commit-as-prs=true
 ```
 
