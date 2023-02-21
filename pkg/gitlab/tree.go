@@ -8,7 +8,7 @@ import (
 
 func (p *Provider) GetFolders() ([]string, error) {
 	recurse := true
-	nodes, _, err := p.client.Repositories.ListTree(repositoryId(), &gitlab.ListTreeOptions{
+	nodes, _, err := p.client.Repositories.ListTree(p.RepositoryID(), &gitlab.ListTreeOptions{
 		ListOptions: gitlab.ListOptions{
 			PerPage: 100,
 		},

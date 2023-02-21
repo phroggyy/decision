@@ -17,6 +17,9 @@ type Provider interface {
 
 	// GetFolders returns all available folders in the configured repository
 	GetFolders() ([]string, error)
+
+	// SetRepository will configure the owner and repository name for the provider. If not set, the default values from the git package will be used.
+	SetRepository(owner string, repository string)
 }
 
 func GetProvider() Provider {

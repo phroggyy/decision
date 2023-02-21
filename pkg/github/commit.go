@@ -20,7 +20,7 @@ func (p *Provider) createFileOnBranch(commitMessage, path, branch string, conten
 		Committer: &github.CommitAuthor{Name: github.String(git.AuthorName), Email: github.String(git.AuthorEmail)},
 	}
 
-	res, _, err := p.client.Repositories.CreateFile(context.Background(), git.SourceOwner, git.SourceRepo, path, commitData)
+	res, _, err := p.client.Repositories.CreateFile(context.Background(), p.GetOwner(), p.GetRepository(), path, commitData)
 
 	if err != nil {
 		return "", err

@@ -13,7 +13,7 @@ func (p *Provider) CreateCommit(commitMessage string, path string, content []byt
 func (p *Provider) createCommitOnBranch(commitMessage, path, content, branch string) (string, error) {
 	createAction := gitlab.FileCreate
 	commit, _, err := p.client.Commits.CreateCommit(
-		repositoryId(),
+		p.RepositoryID(),
 		&gitlab.CreateCommitOptions{
 			Branch:        &branch,
 			StartBranch:   &git.CommitHeadBranch,

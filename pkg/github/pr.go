@@ -44,7 +44,7 @@ func (p *Provider) createPR(prSubject string, branch string) (url string, err er
 		MaintainerCanModify: github.Bool(true),
 	}
 
-	pr, _, err := p.client.PullRequests.Create(context.Background(), git.SourceOwner, git.SourceRepo, newPR)
+	pr, _, err := p.client.PullRequests.Create(context.Background(), p.GetOwner(), p.GetRepository(), newPR)
 	if err != nil {
 		return "", err
 	}
@@ -59,16 +59,16 @@ func (p *Provider) createPR(prSubject string, branch string) (url string, err er
 // from the base branch before returning it.
 func (p *Provider) getBranchRef(commitBranch string) (ref *github.Reference, err error) {
 	ctx := context.Background()
-	if ref, _, err = p.client.Git.GetRef(ctx, git.SourceOwner, git.SourceRepo, "refs/heads/"+commitBranch); err == nil {
+	if ref, _, err = p.client.Git.GetRef(ctx, p.GetOwner(), p.GetRepository(), "refs/heads/"+commitBranch); err == nil {
 		return ref, nil
 	}
 
 	var baseRef *github.Reference
-	if baseRef, _, err = p.client.Git.GetRef(ctx, git.SourceOwner, git.SourceRepo, "refs/heads/"+git.CommitHeadBranch); err != nil {
+	if baseRef, _, err = p.client.Git.GetRef(ctx, p.GetOwner(), p.GetRepository(), "refs/heads/"+git.CommitHeadBranch); err != nil {
 		return nil, err
 	}
 
 	newRef := &github.Reference{Ref: github.String("refs/heads/" + commitBranch), Object: &github.GitObject{SHA: baseRef.Object.SHA}}
-	ref, _, err = p.client.Git.CreateRef(ctx, git.SourceOwner, git.SourceRepo, newRef)
+	ref, _, err = p.client.Git.CreateRef(ctx, p.GetOwner(), p.GetRepository(), newRef)
 	return ref, err
 }
