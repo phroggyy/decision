@@ -24,12 +24,18 @@ func GetProvider() Provider {
 		return provider
 	}
 
-	switch git.ProviderType {
-	case "github":
-		provider = github.NewProvider(git.Token)
-	case "gitlab":
-		provider = gitlab.NewProvider(git.Token)
-	}
+	provider = GetProviderForType(git.ProviderType, git.Token)
 
 	return provider
+}
+
+func GetProviderForType(providerType string, token string) Provider {
+	switch providerType {
+	case "github":
+		return github.NewProvider(token)
+	case "gitlab":
+		return gitlab.NewProvider(token)
+	}
+
+	return nil
 }
