@@ -16,11 +16,12 @@ func (p *Provider) RaisePullRequest(branch string, commitMessage string, path st
 	removeBranch := true
 	squash := true
 	description := git.PullRequestBody(commitMessage)
+	headBranch := p.HeadBranch()
 	mr, _, err := p.client.MergeRequests.CreateMergeRequest(p.RepositoryID(), &gitlab.CreateMergeRequestOptions{
 		Title:              &commitMessage,
 		Description:        &description,
 		SourceBranch:       &branch,
-		TargetBranch:       &git.CommitHeadBranch,
+		TargetBranch:       &headBranch,
 		RemoveSourceBranch: &removeBranch,
 		Squash:             &squash,
 	})

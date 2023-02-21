@@ -3,11 +3,10 @@ package github
 import (
 	"context"
 	"fmt"
-	"github.com/phroggyy/decision/pkg/git"
 )
 
 func (p *Provider) GetFolders() ([]string, error) {
-	tree, _, err := p.client.Git.GetTree(context.Background(), p.GetOwner(), p.GetRepository(), fmt.Sprintf("refs/heads/%s", git.CommitHeadBranch), false)
+	tree, _, err := p.client.Git.GetTree(context.Background(), p.GetOwner(), p.GetRepository(), fmt.Sprintf("refs/heads/%s", p.HeadBranch()), false)
 	if err != nil {
 		fmt.Printf("Error getting tree: %s", err)
 		return nil, nil

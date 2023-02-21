@@ -35,3 +35,11 @@ func (p *Provider) RepositoryID() string {
 
 	return fmt.Sprintf("%s/%s", p.sourceOwner, p.sourceRepo)
 }
+
+func (p *Provider) HeadBranch() string {
+	if git.CommitHeadBranch == "" {
+		return "main"
+	}
+
+	return git.CommitHeadBranch
+}

@@ -2,17 +2,17 @@ package gitlab
 
 import (
 	"fmt"
-	"github.com/phroggyy/decision/pkg/git"
 	"github.com/xanzy/go-gitlab"
 )
 
 func (p *Provider) GetFolders() ([]string, error) {
 	recurse := true
+	headBranch := p.HeadBranch()
 	nodes, _, err := p.client.Repositories.ListTree(p.RepositoryID(), &gitlab.ListTreeOptions{
 		ListOptions: gitlab.ListOptions{
 			PerPage: 100,
 		},
-		Ref:       &git.CommitHeadBranch,
+		Ref:       &headBranch,
 		Recursive: &recurse,
 	})
 

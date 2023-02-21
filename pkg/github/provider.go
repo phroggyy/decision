@@ -42,3 +42,11 @@ func (p *Provider) GetRepository() string {
 
 	return p.sourceRepo
 }
+
+func (p *Provider) HeadBranch() string {
+	if git.CommitHeadBranch == "" {
+		return "main"
+	}
+
+	return git.CommitHeadBranch
+}

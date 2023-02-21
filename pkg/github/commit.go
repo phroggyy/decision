@@ -8,7 +8,7 @@ import (
 )
 
 func (p *Provider) CreateCommit(commitMessage string, path string, content []byte) (string, error) {
-	return p.createFileOnBranch(commitMessage, path, git.CommitHeadBranch, content)
+	return p.createFileOnBranch(commitMessage, path, p.HeadBranch(), content)
 }
 
 // createFileOnBranch will create a new file on an **existing** branch. The function will fail if the branch does not exist.
