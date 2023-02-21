@@ -209,6 +209,8 @@ func (c *Client) HandleModalSubmission(payload *slack.InteractionCallback) error
 		message := "✅ Your decision \"" + title + "\" has been committed <" + decisionURL + "|here>."
 		c.sendDecisionLinkToUser(message, title, decisionURL, sourceChannel, payload.User.ID)
 	}
+
+	return nil
 }
 
 func (c *Client) sendDecisionLinkToUser(message string, title string, fileURL string, channel string, user string) {
