@@ -31,6 +31,10 @@ func NewClient(token string, gitProvider provider.Provider) *Client {
 	}
 }
 
+func (c *Client) GetAPI() *slack.Client {
+	return c.api
+}
+
 func (c *Client) OpenDecisionModal(triggerID string, triggerChannel string) {
 	titleLabel := slack.NewTextBlockObject(slack.PlainTextType, "Title", false, false)
 	titlePlaceholderText := slack.NewTextBlockObject(slack.PlainTextType, "Give this decision a tl;dr title", false, false)
