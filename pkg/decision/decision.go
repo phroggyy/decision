@@ -24,30 +24,30 @@ func OpenDecisionModal(triggerID string, triggerChannel string) {
 	titlePlaceholderText := slack.NewTextBlockObject(slack.PlainTextType, "Give this decision a tl;dr title", false, false)
 	titleInput := slack.NewPlainTextInputBlockElement(titlePlaceholderText, TitleInputID)
 	titleInput.MaxLength = 60
-	titleSection := slack.NewInputBlock(TitleBlockID, titleLabel, titleInput)
+	titleSection := slack.NewInputBlock(TitleBlockID, titleLabel, nil, titleInput)
 
 	categoryLabel := slack.NewTextBlockObject(slack.PlainTextType, "Category", false, false)
 	categorySelect := slack.NewOptionsSelectBlockElement(slack.OptTypeExternal, nil, CategorySelectID)
 	categorySelect.MinQueryLength = new(int)
-	categorySection := slack.NewInputBlock(CategoryBlockID, categoryLabel, categorySelect)
+	categorySection := slack.NewInputBlock(CategoryBlockID, categoryLabel, nil, categorySelect)
 
 	contextLabel := slack.NewTextBlockObject(slack.PlainTextType, "Context", false, false)
 	contextPlaceholderText := slack.NewTextBlockObject(slack.PlainTextType, "Explain why this decision needs to be made. What forces are at play?", false, false)
 	contextInput := slack.NewPlainTextInputBlockElement(contextPlaceholderText, ContextInputID)
 	contextInput.Multiline = true
-	contextSection := slack.NewInputBlock(ContextBlockID, contextLabel, contextInput)
+	contextSection := slack.NewInputBlock(ContextBlockID, contextLabel, nil, contextInput)
 
 	decisionLabel := slack.NewTextBlockObject(slack.PlainTextType, "Decision", false, false)
 	decisionPlaceholderText := slack.NewTextBlockObject(slack.PlainTextType, "Document the decision you've made. Use active voice: \"We will...\"", false, false)
 	decisionInput := slack.NewPlainTextInputBlockElement(decisionPlaceholderText, DecisionInputID)
 	decisionInput.Multiline = true
-	decisionSection := slack.NewInputBlock(DecisionBlockID, decisionLabel, decisionInput)
+	decisionSection := slack.NewInputBlock(DecisionBlockID, decisionLabel, nil, decisionInput)
 
 	consequencesLabel := slack.NewTextBlockObject(slack.PlainTextType, "Consequences", false, false)
 	consequencesPlaceholderText := slack.NewTextBlockObject(slack.PlainTextType, "Describe the consequences, good and bad, after this decision has been made.", false, false)
 	consequencesInput := slack.NewPlainTextInputBlockElement(consequencesPlaceholderText, ConsequencesInputID)
 	consequencesInput.Multiline = true
-	consequencesSection := slack.NewInputBlock(ConsequencesBlockID, consequencesLabel, consequencesInput)
+	consequencesSection := slack.NewInputBlock(ConsequencesBlockID, consequencesLabel, nil, consequencesInput)
 
 	view := slack.ModalViewRequest{
 		CallbackID:      LogDecisionCallbackID,
@@ -90,7 +90,11 @@ func GetCategoryOptions(typeAheadValue *string) slack.OptionsResponse {
 		for _, folder := range existingFolders {
 			categoryOptions = append(categoryOptions, slack.NewOptionBlockObject(
 				strings.ToLower(folder),
-				slack.NewTextBlockObject(slack.PlainTextType, folder, false, false)))
+				slack.NewTextBlockObject(
+					slack.PlainTextType, folder, false, false,
+				),
+				nil,
+			))
 		}
 	}
 
@@ -99,7 +103,9 @@ func GetCategoryOptions(typeAheadValue *string) slack.OptionsResponse {
 	if typeAheadValue != nil && *typeAheadValue != "" {
 		typeAheadOption := slack.NewOptionBlockObject(
 			slug.Make(*typeAheadValue),
-			slack.NewTextBlockObject(slack.PlainTextType, *typeAheadValue+" (Create new)", false, false))
+			slack.NewTextBlockObject(slack.PlainTextType, *typeAheadValue+" (Create new)", false, false),
+			nil,
+		)
 
 		// only add it if it doesn't exist already
 		if typeAheadOption != nil {
