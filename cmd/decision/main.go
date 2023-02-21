@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/phroggyy/decision/pkg/git"
+	"github.com/phroggyy/decision/pkg/provider"
 	"io"
 	"net/http"
 	"os"
@@ -17,6 +18,7 @@ import (
 
 var (
 	signingSecret string
+	client        *decision.Client
 )
 
 func handleSlash(w http.ResponseWriter, r *http.Request) {
@@ -41,7 +43,7 @@ func handleSlash(w http.ResponseWriter, r *http.Request) {
 
 	switch s.Command {
 	case decision.SlashCommand:
-		decision.OpenDecisionModal(s.TriggerID, s.ChannelID)
+		client.OpenDecisionModal(s.TriggerID, s.ChannelID)
 	default:
 		fmt.Printf("%v -- %v", s.Command, s.Text)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -58,7 +60,7 @@ func handleActions(w http.ResponseWriter, r *http.Request) {
 
 	if payload.Type == slack.InteractionTypeViewSubmission {
 		if payload.View.CallbackID == decision.LogDecisionCallbackID {
-			go decision.HandleModalSubmission(&payload)
+			go client.HandleModalSubmission(&payload)
 		}
 	}
 }
@@ -73,7 +75,7 @@ func handleOptions(w http.ResponseWriter, r *http.Request) {
 	if payload.Type == slack.InteractionTypeBlockSuggestion {
 		switch payload.ActionID {
 		case decision.CategorySelectID:
-			categoryOptions := decision.GetCategoryOptions(&payload.Value)
+			categoryOptions := client.GetCategoryOptions(&payload.Value)
 
 			js, err := json.Marshal(categoryOptions)
 			if err != nil {
@@ -168,6 +170,8 @@ func parseFlags() {
 	} else {
 		fmt.Printf("Commit Email: %v\n", redact(git.AuthorEmail))
 	}
+
+	client = decision.NewClient(decision.Token, provider.GetProvider())
 }
 
 func main() {

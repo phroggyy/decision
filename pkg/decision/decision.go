@@ -19,7 +19,19 @@ var (
 	categoryLock    sync.Mutex
 )
 
-func OpenDecisionModal(triggerID string, triggerChannel string) {
+type Client struct {
+	api         *slack.Client
+	gitProvider provider.Provider
+}
+
+func NewClient(token string, gitProvider provider.Provider) *Client {
+	return &Client{
+		api:         slack.New(token),
+		gitProvider: gitProvider,
+	}
+}
+
+func (c *Client) OpenDecisionModal(triggerID string, triggerChannel string) {
 	titleLabel := slack.NewTextBlockObject(slack.PlainTextType, "Title", false, false)
 	titlePlaceholderText := slack.NewTextBlockObject(slack.PlainTextType, "Give this decision a tl;dr title", false, false)
 	titleInput := slack.NewPlainTextInputBlockElement(titlePlaceholderText, TitleInputID)
@@ -67,14 +79,13 @@ func OpenDecisionModal(triggerID string, triggerChannel string) {
 		},
 	}
 
-	api := slack.New(Token)
-	_, err := api.OpenView(triggerID, view)
+	_, err := c.api.OpenView(triggerID, view)
 	if err != nil {
 		fmt.Printf("Error opening modal view: %v\n", err)
 	}
 }
 
-func GetCategoryOptions(typeAheadValue *string) slack.OptionsResponse {
+func (c *Client) GetCategoryOptions(typeAheadValue *string) slack.OptionsResponse {
 	// we only fetch the existing categories from github when the modal is first show
 	// subsequent calls (sent as the user is typing) re-use the list from this fetch
 	modalFirstOpened := typeAheadValue != nil && *typeAheadValue == ""
@@ -83,7 +94,7 @@ func GetCategoryOptions(typeAheadValue *string) slack.OptionsResponse {
 		defer categoryLock.Unlock()
 
 		categoryOptions = make([]*slack.OptionBlockObject, 0)
-		existingFolders, _ := provider.GetProvider().GetFolders()
+		existingFolders, _ := c.gitProvider.GetFolders()
 
 		//existingFolders, _ := github.GetFolders()
 		//existingFolders, _ := github.GetFolders()
@@ -130,7 +141,7 @@ func GetCategoryOptions(typeAheadValue *string) slack.OptionsResponse {
 	return response
 }
 
-func HandleModalSubmission(payload *slack.InteractionCallback) {
+func (c *Client) HandleModalSubmission(payload *slack.InteractionCallback) {
 	submissionValues := payload.View.State.Values
 
 	sourceChannel := payload.View.PrivateMetadata
@@ -176,33 +187,30 @@ func HandleModalSubmission(payload *slack.InteractionCallback) {
 	commitMessage := title
 	content := decisionBytes.Bytes()
 
-	provider := provider.GetProvider()
-
 	if CommitAsPRs {
-		prURL, err := provider.RaisePullRequest(slug.Make(title), commitMessage, fileName, content)
+		prURL, err := c.gitProvider.RaisePullRequest(slug.Make(title), commitMessage, fileName, content)
 		if err != nil {
 			return
 		}
 
 		message := "✅ A pull request for \"" + title + "\" has been created <" + prURL + "|here>."
-		sendDecisionLinkToUser(message, title, prURL, sourceChannel, payload.User.ID)
+		c.sendDecisionLinkToUser(message, title, prURL, sourceChannel, payload.User.ID)
 	} else {
-		decisionURL, err := provider.CreateCommit(commitMessage, fileName, content)
+		decisionURL, err := c.gitProvider.CreateCommit(commitMessage, fileName, content)
 
 		if err != nil {
 			return
 		}
 
 		message := "✅ Your decision \"" + title + "\" has been committed <" + decisionURL + "|here>."
-		sendDecisionLinkToUser(message, title, decisionURL, sourceChannel, payload.User.ID)
+		c.sendDecisionLinkToUser(message, title, decisionURL, sourceChannel, payload.User.ID)
 	}
 }
 
-func sendDecisionLinkToUser(message string, title string, fileURL string, channel string, user string) {
+func (c *Client) sendDecisionLinkToUser(message string, title string, fileURL string, channel string, user string) {
 	// Return an ephemeral message to the user
 	msgOption := slack.MsgOptionText(message, false)
-	api := slack.New(Token)
-	_, err := api.PostEphemeral(channel, user, msgOption)
+	_, err := c.api.PostEphemeral(channel, user, msgOption)
 	if err != nil {
 		fmt.Printf("Failed to send message: %v (%v, %v)\n", err, channel, user)
 		return
