@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/evnsio/decision/pkg/git"
 	"github.com/google/go-github/github"
+	"github.com/phroggyy/decision/pkg/git"
 	"log"
 )
 

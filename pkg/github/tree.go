@@ -3,7 +3,7 @@ package github
 import (
 	"context"
 	"fmt"
-	"github.com/evnsio/decision/pkg/git"
+	"github.com/phroggyy/decision/pkg/git"
 )
 
 func (p *Provider) GetFolders() ([]string, error) {

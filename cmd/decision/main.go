@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/evnsio/decision/pkg/git"
+	"github.com/phroggyy/decision/pkg/git"
 	"io"
 	"net/http"
 	"os"
@@ -11,7 +11,7 @@ import (
 
 	"github.com/namsral/flag"
 
-	"github.com/evnsio/decision/pkg/decision"
+	"github.com/phroggyy/decision/pkg/decision"
 	"github.com/slack-go/slack"
 )
 

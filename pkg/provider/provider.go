@@ -1,9 +1,9 @@
 package provider
 
 import (
-	"github.com/evnsio/decision/pkg/git"
-	"github.com/evnsio/decision/pkg/github"
-	"github.com/evnsio/decision/pkg/gitlab"
+	"github.com/phroggyy/decision/pkg/git"
+	"github.com/phroggyy/decision/pkg/github"
+	"github.com/phroggyy/decision/pkg/gitlab"
 )
 
 var provider Provider

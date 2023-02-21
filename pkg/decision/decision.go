@@ -3,7 +3,7 @@ package decision
 import (
 	"bytes"
 	"fmt"
-	"github.com/evnsio/decision/pkg/provider"
+	"github.com/phroggyy/decision/pkg/provider"
 	"html/template"
 	"strings"
 	"sync"

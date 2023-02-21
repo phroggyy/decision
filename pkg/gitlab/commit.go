@@ -2,7 +2,7 @@ package gitlab
 
 import (
 	"fmt"
-	"github.com/evnsio/decision/pkg/git"
+	"github.com/phroggyy/decision/pkg/git"
 	"github.com/xanzy/go-gitlab"
 )
 

@@ -1,4 +1,4 @@
-module github.com/evnsio/decision
+module github.com/phroggyy/decision
 
 go 1.13
 
