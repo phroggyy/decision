@@ -145,7 +145,7 @@ func (c *Client) GetCategoryOptions(typeAheadValue *string) slack.OptionsRespons
 	return response
 }
 
-func (c *Client) HandleModalSubmission(payload *slack.InteractionCallback) {
+func (c *Client) HandleModalSubmission(payload *slack.InteractionCallback) error {
 	submissionValues := payload.View.State.Values
 
 	sourceChannel := payload.View.PrivateMetadata
@@ -176,14 +176,14 @@ func (c *Client) HandleModalSubmission(payload *slack.InteractionCallback) {
 	tmpl, err := template.New("decision").Parse(decisionTemplate)
 	if err != nil {
 		fmt.Printf("Failed to parse template: %v", err)
-		return
+		return err
 	}
 
 	var decisionBytes bytes.Buffer
 	err = tmpl.Execute(&decisionBytes, decisionData)
 	if err != nil {
 		fmt.Printf("Failed to execute template: %v", err)
-		return
+		return err
 	}
 
 	dateNow := time.Now().Format("2006-01-02")
@@ -194,7 +194,7 @@ func (c *Client) HandleModalSubmission(payload *slack.InteractionCallback) {
 	if CommitAsPRs {
 		prURL, err := c.gitProvider.RaisePullRequest(slug.Make(title), commitMessage, fileName, content)
 		if err != nil {
-			return
+			return err
 		}
 
 		message := "✅ A pull request for \"" + title + "\" has been created <" + prURL + "|here>."
@@ -203,7 +203,7 @@ func (c *Client) HandleModalSubmission(payload *slack.InteractionCallback) {
 		decisionURL, err := c.gitProvider.CreateCommit(commitMessage, fileName, content)
 
 		if err != nil {
-			return
+			return err
 		}
 
 		message := "✅ Your decision \"" + title + "\" has been committed <" + decisionURL + "|here>."
