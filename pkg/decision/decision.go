@@ -3,11 +3,12 @@ package decision
 import (
 	"bytes"
 	"fmt"
-	"github.com/phroggyy/decision/pkg/provider"
 	"html/template"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/phroggyy/decision/pkg/provider"
 
 	"github.com/gosimple/slug"
 
@@ -38,9 +39,9 @@ func (c *Client) GetAPI() *slack.Client {
 func (c *Client) OpenDecisionModal(triggerID string, triggerChannel string) {
 	titleLabel := slack.NewTextBlockObject(slack.PlainTextType, "Title", false, false)
 	titlePlaceholderText := slack.NewTextBlockObject(slack.PlainTextType, "Give this decision a tl;dr title", false, false)
-	titleInput := slack.NewPlainTextInputBlockElement(titlePlaceholderText, TitleInputID)
+	titleInput := slack.NewPlainTextInputBlockElement(nil, TitleInputID)
 	titleInput.MaxLength = 60
-	titleSection := slack.NewInputBlock(TitleBlockID, titleLabel, nil, titleInput)
+	titleSection := slack.NewInputBlock(TitleBlockID, titleLabel, titlePlaceholderText, titleInput)
 
 	categoryLabel := slack.NewTextBlockObject(slack.PlainTextType, "Category", false, false)
 	categorySelect := slack.NewOptionsSelectBlockElement(slack.OptTypeExternal, nil, CategorySelectID)
@@ -49,28 +50,28 @@ func (c *Client) OpenDecisionModal(triggerID string, triggerChannel string) {
 
 	contextLabel := slack.NewTextBlockObject(slack.PlainTextType, "Context", false, false)
 	contextPlaceholderText := slack.NewTextBlockObject(slack.PlainTextType, "Explain why this decision needs to be made. What forces are at play?", false, false)
-	contextInput := slack.NewPlainTextInputBlockElement(contextPlaceholderText, ContextInputID)
+	contextInput := slack.NewPlainTextInputBlockElement(nil, ContextInputID)
 	contextInput.Multiline = true
-	contextSection := slack.NewInputBlock(ContextBlockID, contextLabel, nil, contextInput)
+	contextSection := slack.NewInputBlock(ContextBlockID, contextLabel, contextPlaceholderText, contextInput)
 
 	decisionLabel := slack.NewTextBlockObject(slack.PlainTextType, "Decision", false, false)
 	decisionPlaceholderText := slack.NewTextBlockObject(slack.PlainTextType, "Document the decision you've made. Use active voice: \"We will...\"", false, false)
-	decisionInput := slack.NewPlainTextInputBlockElement(decisionPlaceholderText, DecisionInputID)
+	decisionInput := slack.NewPlainTextInputBlockElement(nil, DecisionInputID)
 	decisionInput.Multiline = true
-	decisionSection := slack.NewInputBlock(DecisionBlockID, decisionLabel, nil, decisionInput)
+	decisionSection := slack.NewInputBlock(DecisionBlockID, decisionLabel, decisionPlaceholderText, decisionInput)
 
 	consequencesLabel := slack.NewTextBlockObject(slack.PlainTextType, "Consequences", false, false)
 	consequencesPlaceholderText := slack.NewTextBlockObject(slack.PlainTextType, "Describe the consequences, good and bad, after this decision has been made.", false, false)
-	consequencesInput := slack.NewPlainTextInputBlockElement(consequencesPlaceholderText, ConsequencesInputID)
+	consequencesInput := slack.NewPlainTextInputBlockElement(nil, ConsequencesInputID)
 	consequencesInput.Multiline = true
-	consequencesSection := slack.NewInputBlock(ConsequencesBlockID, consequencesLabel, nil, consequencesInput)
+	consequencesSection := slack.NewInputBlock(ConsequencesBlockID, consequencesLabel, consequencesPlaceholderText, consequencesInput)
 
 	view := slack.ModalViewRequest{
 		CallbackID:      LogDecisionCallbackID,
 		Type:            slack.ViewType("modal"),
-		Title:           slack.NewTextBlockObject(slack.PlainTextType, "Decision", false, false),
+		Title:           slack.NewTextBlockObject(slack.PlainTextType, "Record a decision", false, false),
 		Close:           slack.NewTextBlockObject(slack.PlainTextType, "Cancel", false, false),
-		Submit:          slack.NewTextBlockObject(slack.PlainTextType, "Log Decision", false, false),
+		Submit:          slack.NewTextBlockObject(slack.PlainTextType, "Record decision", false, false),
 		PrivateMetadata: triggerChannel,
 		Blocks: slack.Blocks{
 			BlockSet: []slack.Block{
