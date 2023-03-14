@@ -53,18 +53,21 @@ func (c *Client) OpenDecisionModal(triggerID string, triggerChannel string) {
 	contextInput := slack.NewPlainTextInputBlockElement(nil, ContextInputID)
 	contextInput.Multiline = true
 	contextSection := slack.NewInputBlock(ContextBlockID, contextLabel, contextPlaceholderText, contextInput)
+	contextSection.Optional = true
 
 	decisionLabel := slack.NewTextBlockObject(slack.PlainTextType, "Decision", false, false)
 	decisionPlaceholderText := slack.NewTextBlockObject(slack.PlainTextType, "Document the decision you've made. Use active voice: \"We will...\"", false, false)
 	decisionInput := slack.NewPlainTextInputBlockElement(nil, DecisionInputID)
 	decisionInput.Multiline = true
 	decisionSection := slack.NewInputBlock(DecisionBlockID, decisionLabel, decisionPlaceholderText, decisionInput)
+	decisionSection.Optional = true
 
 	consequencesLabel := slack.NewTextBlockObject(slack.PlainTextType, "Consequences", false, false)
 	consequencesPlaceholderText := slack.NewTextBlockObject(slack.PlainTextType, "Describe the consequences, good and bad, after this decision has been made.", false, false)
 	consequencesInput := slack.NewPlainTextInputBlockElement(nil, ConsequencesInputID)
 	consequencesInput.Multiline = true
 	consequencesSection := slack.NewInputBlock(ConsequencesBlockID, consequencesLabel, consequencesPlaceholderText, consequencesInput)
+	consequencesSection.Optional = true
 
 	view := slack.ModalViewRequest{
 		CallbackID:      LogDecisionCallbackID,
