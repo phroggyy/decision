@@ -3,17 +3,19 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/phroggyy/decision/pkg/git"
-	"github.com/phroggyy/decision/pkg/provider"
 	"io"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/phroggyy/decision/pkg/git"
+	"github.com/phroggyy/decision/pkg/provider"
+
 	"github.com/namsral/flag"
 
-	"github.com/phroggyy/decision/pkg/decision"
 	"github.com/slack-go/slack"
+
+	"github.com/phroggyy/decision/pkg/decision"
 )
 
 var (
@@ -43,7 +45,7 @@ func handleSlash(w http.ResponseWriter, r *http.Request) {
 
 	switch s.Command {
 	case decision.SlashCommand:
-		client.OpenDecisionModal(s.TriggerID, s.ChannelID)
+		client.OpenDecisionModal(s.TriggerID, s.ChannelID, "")
 	default:
 		fmt.Printf("%v -- %v", s.Command, s.Text)
 		w.WriteHeader(http.StatusInternalServerError)

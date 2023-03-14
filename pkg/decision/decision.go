@@ -36,11 +36,12 @@ func (c *Client) GetAPI() *slack.Client {
 	return c.api
 }
 
-func (c *Client) OpenDecisionModal(triggerID string, triggerChannel string) {
+func (c *Client) OpenDecisionModal(triggerID string, triggerChannel string, initialTitle string) {
 	titleLabel := slack.NewTextBlockObject(slack.PlainTextType, "Title", false, false)
 	titlePlaceholderText := slack.NewTextBlockObject(slack.PlainTextType, "Give this decision a tl;dr title", false, false)
 	titleInput := slack.NewPlainTextInputBlockElement(nil, TitleInputID)
 	titleInput.MaxLength = 60
+	titleInput.InitialValue = initialTitle
 	titleSection := slack.NewInputBlock(TitleBlockID, titleLabel, titlePlaceholderText, titleInput)
 
 	categoryLabel := slack.NewTextBlockObject(slack.PlainTextType, "Category", false, false)
