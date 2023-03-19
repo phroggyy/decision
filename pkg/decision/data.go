@@ -38,6 +38,32 @@ type Decision struct {
 	Consequences string
 }
 
+type Option = func(*Decision)
+
+func WithTitle(title string) Option {
+	return func(d *Decision) {
+		d.Title = title
+	}
+}
+
+func WithContext(context string) Option {
+	return func(d *Decision) {
+		d.Context = context
+	}
+}
+
+func WithConsequences(consequences string) Option {
+	return func(d *Decision) {
+		d.Consequences = consequences
+	}
+}
+
+func WithDecision(decision string) Option {
+	return func(d *Decision) {
+		d.Decision = decision
+	}
+}
+
 var decisionTemplate = `# {{.Title}}
 
 Author: [@{{.SlackHandle}}](slack://user?team={{.TeamID}}&id={{.UserID}})

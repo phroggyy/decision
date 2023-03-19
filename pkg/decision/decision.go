@@ -36,12 +36,18 @@ func (c *Client) GetAPI() *slack.Client {
 	return c.api
 }
 
-func (c *Client) OpenDecisionModal(triggerID string, triggerChannel string, initialTitle string) {
+func (c *Client) OpenDecisionModal(triggerID string, triggerChannel string, options ...Option) {
+	defaults := &Decision{}
+
+	for _, option := range options {
+		option(defaults)
+	}
+
 	titleLabel := slack.NewTextBlockObject(slack.PlainTextType, "Title", false, false)
 	titlePlaceholderText := slack.NewTextBlockObject(slack.PlainTextType, "Give this decision a tl;dr title", false, false)
 	titleInput := slack.NewPlainTextInputBlockElement(nil, TitleInputID)
 	titleInput.MaxLength = 60
-	titleInput.InitialValue = initialTitle
+	titleInput.InitialValue = defaults.Title
 	titleSection := slack.NewInputBlock(TitleBlockID, titleLabel, titlePlaceholderText, titleInput)
 
 	categoryLabel := slack.NewTextBlockObject(slack.PlainTextType, "Category", false, false)
@@ -53,6 +59,7 @@ func (c *Client) OpenDecisionModal(triggerID string, triggerChannel string, init
 	contextPlaceholderText := slack.NewTextBlockObject(slack.PlainTextType, "Explain why this decision needs to be made. What forces are at play?", false, false)
 	contextInput := slack.NewPlainTextInputBlockElement(nil, ContextInputID)
 	contextInput.Multiline = true
+	contextInput.InitialValue = defaults.Context
 	contextSection := slack.NewInputBlock(ContextBlockID, contextLabel, contextPlaceholderText, contextInput)
 	contextSection.Optional = true
 
@@ -60,6 +67,7 @@ func (c *Client) OpenDecisionModal(triggerID string, triggerChannel string, init
 	decisionPlaceholderText := slack.NewTextBlockObject(slack.PlainTextType, "Document the decision you've made. Use active voice: \"We will...\"", false, false)
 	decisionInput := slack.NewPlainTextInputBlockElement(nil, DecisionInputID)
 	decisionInput.Multiline = true
+	decisionInput.InitialValue = defaults.Decision
 	decisionSection := slack.NewInputBlock(DecisionBlockID, decisionLabel, decisionPlaceholderText, decisionInput)
 	decisionSection.Optional = true
 
@@ -67,6 +75,7 @@ func (c *Client) OpenDecisionModal(triggerID string, triggerChannel string, init
 	consequencesPlaceholderText := slack.NewTextBlockObject(slack.PlainTextType, "Describe the consequences, good and bad, after this decision has been made.", false, false)
 	consequencesInput := slack.NewPlainTextInputBlockElement(nil, ConsequencesInputID)
 	consequencesInput.Multiline = true
+	consequencesInput.InitialValue = defaults.Consequences
 	consequencesSection := slack.NewInputBlock(ConsequencesBlockID, consequencesLabel, consequencesPlaceholderText, consequencesInput)
 	consequencesSection.Optional = true
 
