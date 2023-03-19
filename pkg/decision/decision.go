@@ -36,7 +36,7 @@ func (c *Client) GetAPI() *slack.Client {
 	return c.api
 }
 
-func (c *Client) OpenDecisionModal(triggerID string, triggerChannel string, options ...Option) {
+func (c *Client) OpenDecisionModal(triggerID string, triggerChannel string, options ...Option) (*slack.View, error) {
 	defaults := &Decision{}
 
 	for _, option := range options {
@@ -97,10 +97,12 @@ func (c *Client) OpenDecisionModal(triggerID string, triggerChannel string, opti
 		},
 	}
 
-	_, err := c.api.OpenView(triggerID, view)
+	viewRes, err := c.api.OpenView(triggerID, view)
 	if err != nil {
 		fmt.Printf("Error opening modal view: %v\n", err)
 	}
+
+	return &viewRes.View, err
 }
 
 func (c *Client) GetCategoryOptions(typeAheadValue *string) slack.OptionsResponse {
