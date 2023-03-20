@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/phroggyy/decision/pkg/metadata"
 	"github.com/phroggyy/decision/pkg/provider"
 
 	"github.com/gosimple/slug"
@@ -85,7 +86,7 @@ func (c *Client) OpenDecisionModal(triggerID string, triggerChannel string, opti
 		Title:           slack.NewTextBlockObject(slack.PlainTextType, "Record a decision", false, false),
 		Close:           slack.NewTextBlockObject(slack.PlainTextType, "Cancel", false, false),
 		Submit:          slack.NewTextBlockObject(slack.PlainTextType, "Record decision", false, false),
-		PrivateMetadata: triggerChannel,
+		PrivateMetadata: metadata.ForChannel(triggerChannel).String(),
 		Blocks: slack.Blocks{
 			BlockSet: []slack.Block{
 				titleSection,
@@ -164,7 +165,7 @@ func (c *Client) GetCategoryOptions(typeAheadValue *string) slack.OptionsRespons
 func (c *Client) HandleModalSubmission(payload *slack.InteractionCallback) error {
 	submissionValues := payload.View.State.Values
 
-	sourceChannel := payload.View.PrivateMetadata
+	sourceChannel := metadata.MustParse(payload.View.PrivateMetadata).ChannelID
 
 	title := submissionValues[TitleBlockID][TitleInputID].Value
 	category := submissionValues[CategoryBlockID][CategorySelectID].SelectedOption.Value
